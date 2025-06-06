@@ -18,19 +18,50 @@ const init = async () => {
     {
       method: "GET",
       path: "/getUsers",
-      handler: () => {
-        const allUsers = Connection.getUsers();
+      handler: async (request, h) => {
+        const allUsers = await Connection.getUsers();
         console.log(allUsers);
-        return "hi";
+        return h.response(allUsers);
       },
     },
     {
-      method: "GET",
-      path: "/updateUser",
-      handler: () => {
-        const updateUser = Connection.updateUser();
-        console.log(updateUser);
+      method: "PUT",
+      path: "/updateUser/{id}",
+      handler: async (request, h) => {
+        let userId = request.params.id;
+        let todo_name = request.payload.todo_name;
+        let todo_user = request.payload.todo_user;
+        console.log(userId);
+
+        const updateUser = await Connection.updateUser(
+          userId,
+          todo_name,
+          todo_user
+        );
+
         return "User get updated";
+      },
+    },
+    {
+      method: "POST",
+      path: "/addUser",
+      handler: async (request, h) => {
+        let todo_name = request.payload.todo_name;
+        let todo_user = request.payload.todo_user;
+
+        const addUser = await Connection.addUser(todo_name, todo_user);
+
+        return "New user added";
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/deleteUser/{id}",
+      handler: async (request, h) => {
+        let userId = request.params.id;
+
+        const deleteUser = await Connection.deleteUser(userId);
+        return "Delete successfully";
       },
     },
   ]);
