@@ -39,7 +39,7 @@ const init = async () => {
           todo_user
         );
 
-        return "User get updated";
+        return h.response(updateUser);
       },
     },
     {
@@ -51,7 +51,7 @@ const init = async () => {
 
         const addUser = await Connection.addUser(todo_name, todo_user);
 
-        return "New user added";
+        return h.response(addUser);
       },
     },
     {
@@ -61,7 +61,7 @@ const init = async () => {
         let userId = request.params.id;
 
         const deleteUser = await Connection.deleteUser(userId);
-        return "Delete successfully";
+        return h.response(deleteUser);
       },
     },
   ]);
