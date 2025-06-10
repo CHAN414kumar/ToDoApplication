@@ -28,16 +28,10 @@ const init = async () => {
       method: "PUT",
       path: "/updateUser/{id}",
       handler: async (request, h) => {
-        let userId = request.params.id;
-        let todo_name = request.payload.todo_name;
-        let todo_user = request.payload.todo_user;
-        console.log(userId);
+        let id = request.params.id;
+        let name = request.payload.name;
 
-        const updateUser = await Connection.updateUser(
-          userId,
-          todo_name,
-          todo_user
-        );
+        const updateUser = await Connection.updateUser(id, name);
 
         return h.response(updateUser);
       },
@@ -46,10 +40,9 @@ const init = async () => {
       method: "POST",
       path: "/addUser",
       handler: async (request, h) => {
-        let todo_name = request.payload.todo_name;
-        let todo_user = request.payload.todo_user;
+        let name = request.payload.name;
 
-        const addUser = await Connection.addUser(todo_name, todo_user);
+        const addUser = await Connection.addUser(name);
 
         return h.response(addUser);
       },
@@ -58,10 +51,50 @@ const init = async () => {
       method: "DELETE",
       path: "/deleteUser/{id}",
       handler: async (request, h) => {
-        let userId = request.params.id;
+        let Id = request.params.id;
 
-        const deleteUser = await Connection.deleteUser(userId);
+        const deleteUser = await Connection.deleteUser(Id);
         return h.response(deleteUser);
+      },
+    },
+    {
+      method: "GET",
+      path: "/getTodos",
+      handler: async (request, h) => {
+        const getTodos = await Connection.getTodos();
+        return h.response(getTodos);
+      },
+    },
+    {
+      method: "POST",
+      path: "/addTodo",
+      handler: async (request, h) => {
+        let todo_name = request.payload.todo_name;
+        let user_id = request.payload.user_id;
+        const addTodo = await Connection.addTodo(todo_name, user_id);
+        return h.response(addTodo);
+      },
+    },
+    {
+      method: "PUT",
+      path: "/updateTodo/{id}",
+      handler: async (request, h) => {
+        let id = request.params.id;
+        let todo_name = request.payload.todo_name;
+        let user_id = request.payload.user_id;
+
+        const updatTodo = await Connection.updateTodo(id, todo_name, user_id);
+        return h.response(updatTodo);
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/deleteTodo/{id}",
+      handler: async (request, h) => {
+        let id = request.params.id;
+
+        const deleteTodo = await Connection.deleteTodo(id);
+        return h.response(deleteTodo);
       },
     },
   ]);

@@ -13,8 +13,8 @@ const sequelize = new Sequelize(
   }
 );
 
-const User = sequelize.define(
-  "User",
+const Todo = sequelize.define(
+  "Todo",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -24,12 +24,31 @@ const User = sequelize.define(
     todo_name: {
       type: DataTypes.STRING,
     },
-    todo_user: {
+    user_id: {
+      type: DataTypes.INTEGER,
+      foreignKey: true,
+    },
+  },
+  {
+    tableName: "todo",
+    timestamps: false,
+  }
+);
+
+const User = sequelize.define(
+  "User",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    name: {
       type: DataTypes.STRING,
     },
   },
   {
-    tableName: "todos",
+    tableName: "users",
     timestamps: false,
   }
 );
@@ -47,21 +66,21 @@ module.exports.getUsers = async function () {
   }
 };
 
-module.exports.updateUser = async function (userId, work, name) {
+module.exports.updateUser = async function (id, name) {
   try {
     await sequelize.authenticate();
-    console.log("Update user by id=" + userId);
+
     // const [result, metadata] = await sequelize.query(
     //   `UPDATE todos SET todo_name="${work}" WHERE id = ${userId}`
     // );
     const result = await User.update(
       {
-        todo_name: work,
+        name: name,
       },
 
       {
         where: {
-          id: userId,
+          id: id,
         },
       }
     );
@@ -72,7 +91,7 @@ module.exports.updateUser = async function (userId, work, name) {
   }
 };
 
-module.exports.addUser = async function (todo_name, todo_user) {
+module.exports.addUser = async function (name) {
   try {
     await sequelize.authenticate();
     // const [result, metadata] = await sequelize.query(
@@ -80,8 +99,7 @@ module.exports.addUser = async function (todo_name, todo_user) {
     // );
 
     const result = await User.create({
-      todo_name: todo_name,
-      todo_user: todo_user,
+      name: name,
     });
     return "added";
   } catch (err) {
@@ -90,7 +108,7 @@ module.exports.addUser = async function (todo_name, todo_user) {
   }
 };
 
-module.exports.deleteUser = async function (userId) {
+module.exports.deleteUser = async function (Id) {
   try {
     await sequelize.authenticate();
 
@@ -100,7 +118,7 @@ module.exports.deleteUser = async function (userId) {
 
     const result = await User.destroy({
       where: {
-        id: userId,
+        id: Id,
       },
     });
 
@@ -108,5 +126,66 @@ module.exports.deleteUser = async function (userId) {
   } catch (err) {
     console.log("Not able to delete user");
     return "Can`t delete";
+  }
+};
+
+//for todo table
+module.exports.getTodos = async function () {
+  try {
+    await sequelize.authenticate();
+    console.log("Get all todos");
+    const result = await Todo.findAll();
+    return result;
+  } catch (err) {
+    console.log(err);
+    return "Not able to fetch";
+  }
+};
+
+module.exports.addTodo = async function (todo_name, user_id) {
+  try {
+    await sequelize.authenticate();
+    const result = await Todo.create({
+      todo_name: todo_name,
+      user_id: user_id,
+    });
+    return "Added successfully";
+  } catch (err) {
+    return "Not able to add";
+  }
+};
+
+module.exports.updateTodo = async function (id, todo_name, user_id) {
+  try {
+    await sequelize.authenticate();
+    const result = await Todo.update(
+      {
+        todo_name: todo_name,
+        user_id: user_id,
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+    return "Updated todo";
+  } catch (err) {
+    return "Not able to update";
+  }
+};
+
+module.exports.deleteTodo = async function (id) {
+  try {
+    await sequelize.authenticate();
+
+    const result = await Todo.destroy({
+      where: {
+        id: id,
+      },
+    });
+    return "Deleted Todo";
+  } catch (err) {
+    return "Not able to Delete";
   }
 };
